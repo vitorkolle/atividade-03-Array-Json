@@ -101,4 +101,29 @@ const getCapitalPais = function(){
     
 
 }
-console.log(getCapitalPais())
+//getCapitalPais()
+
+const getCidades = function(siglaEstadoC){
+     jsonCidades = {}
+     arrayCidades = []
+     const siglaC = siglaEstadoC
+
+     estados_cidade.estadosCidades.estados.forEach(estados => {
+          
+          if(siglaC == estados.sigla){
+               jsonCidades.uf = estados.sigla
+               jsonCidades.descricao = estados.nome
+               jsonCidades.quantidade_cidades = estados.cidades.length
+
+               estados.cidades.forEach(cidadesM => {
+                    arrayCidades.push(cidadesM.nome)                    
+               });
+
+               jsonCidades.cidades = arrayCidades
+          }          
+
+     
+     })
+     return jsonCidades
+}
+//console.log(getCidades('AC'))
