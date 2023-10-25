@@ -1,6 +1,6 @@
 var estados_cidade = require('./estados_cidades')
 
-const getListaDeEstados = function(){
+const getListaDeEstados = function(){ 
      const arrayEstados = []
 
      const JsonEstados = {}
@@ -32,4 +32,4 @@ const getDadosEstado = function(siglaEstado){
 
      console.log(jsonEstado)
 }
-getDadosEstado('SP')
+//getDadosEstado('RS')
