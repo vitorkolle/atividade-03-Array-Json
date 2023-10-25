@@ -68,8 +68,37 @@ const getEstadosRegiao = function(regiao){
      jsonRegiao.regiao = eRegiao
      jsonRegiao.estados = estados
 
-     console.log(jsonRegiao)
+     return jsonRegiao
 }
+//getEstadosRegiao('Sudeste')
 
+const getCapitalPais = function(){
+     const capitais = []
+    
+     
+     estados_cidade.estadosCidades.estados.forEach(estadosCap => {
+         
+     
+         if(estadosCap.capital_pais?.capital != null){
+          jsonEstadosCap = {}
+          jsonEstadosCap.capital_atual = estadosCap.capital_pais?.capital
+          jsonEstadosCap.uf = estadosCap.sigla
+          jsonEstadosCap.descricao = estadosCap.nome
+          jsonEstadosCap.capital = estadosCap.capital
+          jsonEstadosCap.regiao = estadosCap.regiao
+          jsonEstadosCap.capital_pais_ano_inicio = estadosCap.capital_pais?.ano_inicio
+          jsonEstadosCap.capital_pais_ano_termino = estadosCap.capital_pais?.ano_fim
+          
+          capitais.push(jsonEstadosCap)
+          }
+          
+     });
+     const jsonCapital = {}
 
-getEstadosRegiao('Sudeste')
+     jsonCapital.capitais = capitais
+
+     return jsonCapital
+    
+
+}
+console.log(getCapitalPais())
