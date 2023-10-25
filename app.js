@@ -1,6 +1,6 @@
 var estados_cidade = require('./estados_cidades')
 
-const getListaDeEstados = function(){ 
+const getListaDeEstados = function(){  
      const arrayEstados = []
 
      const JsonEstados = {}
@@ -17,7 +17,7 @@ const getListaDeEstados = function(){
 }
 //getListaDeEstados()
 
-const getDadosEstado = function(siglaEstado){
+const getDadosEstado = function(siglaEstado){ 
      const estado = siglaEstado
      const jsonEstado = {}
 
@@ -30,7 +30,7 @@ const getDadosEstado = function(siglaEstado){
           } 
      });
 
-     console.log(jsonEstado)
+      return jsonEstado
 }
 //getDadosEstado('RS')
 
@@ -46,6 +46,30 @@ const getCapitalEstado = function(siglaEstado){
           } 
      });
 
-     console.log(jsonCapEstado)
+     return jsonCapEstado
 }
-//getCapitalEstado("RJ")
+//getCapitalEstado('RJ')
+
+const getEstadosRegiao = function(regiao){
+     const eRegiao = regiao
+     const estados = []
+     
+     estados_cidade.estadosCidades.estados.forEach(estadosR => {
+          const jsonEstadosRegiao = {}
+
+          if(eRegiao == estadosR.regiao){
+               jsonEstadosRegiao.uf = estadosR.sigla
+               jsonEstadosRegiao.descricao = estadosR.nome  
+               estados.push(jsonEstadosRegiao)    
+          }
+          
+     })
+     const jsonRegiao = {}
+     jsonRegiao.regiao = eRegiao
+     jsonRegiao.estados = estados
+
+     console.log(jsonRegiao)
+}
+
+
+getEstadosRegiao('Sudeste')
