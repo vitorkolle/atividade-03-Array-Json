@@ -33,3 +33,19 @@ const getDadosEstado = function(siglaEstado){
      console.log(jsonEstado)
 }
 //getDadosEstado('RS')
+
+const getCapitalEstado = function(siglaEstado){
+     const estado = siglaEstado
+     const jsonCapEstado = {}
+
+     estados_cidade.estadosCidades.estados.forEach(cEstado => {
+           if(estado == cEstado.sigla){
+               jsonCapEstado.uf = cEstado.sigla
+               jsonCapEstado.descricao = cEstado.nome
+               jsonCapEstado.capital = cEstado.capital
+          } 
+     });
+
+     console.log(jsonCapEstado)
+}
+//getCapitalEstado("RJ")
