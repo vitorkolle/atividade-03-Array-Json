@@ -1,129 +1,128 @@
-var estados_cidade = require('./estados_cidades')
+/*******************************************************************************
+ * Objetivo: Criação de uma API para manipular dados de Estados e Cidades
+ * Data: 01/11/2023
+ * Autor: Vitor Paes Kolle
+ * Versão: 1.0
+ *******************************************************************************/
+//para criar uma API, podemos utilizar o 'EXPRESS', 'BODY-PARSER' & 'CORS'
 
-const getListaDeEstados = function(){  
-     const arrayEstados = []
+//"npm instal {express, body-parser & cors} --save"
 
-     const JsonEstados = {}
-     
-     estados_cidade.estadosCidades.estados.forEach(estado => {
+//express - biblioteca que vai gerenciar as requisições da API
+//body-parser - biblioteca que vai manipular dados do corpo da requisição (POST, PUT)
+//cors - biblioteca responsável pelas permissões (HEADER) de acesso das requisições
 
-          arrayEstados.push(estado.sigla)
-});
+//Import das bibliotecas para criar a API
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
 
- JsonEstados.uf = arrayEstados
- JsonEstados.quantidade = arrayEstados.length
+//Criando um objeto para manipular as requisições da API
+const app = express()
 
- return JsonEstados
-}
-//getListaDeEstados()
+//request - entrada de dados na API
+//response - saída (return) de dados na API
 
-const getDadosEstado = function(siglaEstado){ 
-     const estado = siglaEstado
-     const jsonEstado = {}
+//Dizer como iremos utilizar esse objeto
+app.use((request, response, next) => {
+//Permite especificar quem poderá acessar a API (* = liberar acesso público, 'ip' = liberar acesso apenas para aquele ip)
+    response.header('Access-Control-Allow-Origin', '*')
+//Permite especficar como a API será requisitada (GET, POST, PUT E DELETE)
+    response.header('Access-Control-Allow-Methods', 'GET')
 
-     estados_cidade.estadosCidades.estados.forEach(pEstado => {
-           if(estado == pEstado.sigla){
-               jsonEstado.uf = pEstado.sigla
-               jsonEstado.descricao = pEstado.nome
-               jsonEstado.capital = pEstado.capital
-               jsonEstado.regiao = pEstado.regiao
-          } 
-     });
+//Ativa as configurações de permissão no CORS
+    app.use(cors())
 
-      return jsonEstado
-}
-//getDadosEstado('RS')
+    next()
+})
 
-const getCapitalEstado = function(siglaEstado){
-     const estado = siglaEstado
-     const jsonCapEstado = {}
+//endpoint: lista a sigla de todos os estados
+app.get('/estados/sigla', cors(), async function(request, response, next){
+    let controleEstadosCidades = require('./module/atividade.js')
+    let listaEstados = controleEstadosCidades.getListaDeEstados()
 
-     estados_cidade.estadosCidades.estados.forEach(cEstado => {
-           if(estado == cEstado.sigla){
-               jsonCapEstado.uf = cEstado.sigla
-               jsonCapEstado.descricao = cEstado.nome
-               jsonCapEstado.capital = cEstado.capital
-          } 
-     });
+    if(listaEstados){
+        response.json(listaEstados)
+        response.status(200)
+    }
+    else{
+        response.status(404)
+        response.json('{erro: item não encontrado}')
+    }
+})
 
-     return jsonCapEstado
-}
-//getCapitalEstado('RJ')
+//endpoint: retorna dados do estado filtrando pela sigla
+app.get('/estado/sigla/:uf', cors(), async function(request, response, next){
+    //recebe variável encaminhada como parâmetro da requisição
+    let siglaEstado = request.params.uf
 
-const getEstadosRegiao = function(regiao){
-     const eRegiao = regiao
-     const estados = []
-     
-     estados_cidade.estadosCidades.estados.forEach(estadosR => {
-          const jsonEstadosRegiao = {}
-
-          if(eRegiao == estadosR.regiao){
-               jsonEstadosRegiao.uf = estadosR.sigla
-               jsonEstadosRegiao.descricao = estadosR.nome  
-               estados.push(jsonEstadosRegiao)    
-          }
-          
-     })
-     const jsonRegiao = {}
-     jsonRegiao.regiao = eRegiao
-     jsonRegiao.estados = estados
-
-     return jsonRegiao
-}
-//getEstadosRegiao('Sudeste')
-
-const getCapitalPais = function(){
-     const capitais = []
+    let controleDadosEstado = require('./module/atividade.js')
+    let dadosEstado = controleDadosEstado.getDadosEstado(siglaEstado)
     
-     
-     estados_cidade.estadosCidades.estados.forEach(estadosCap => {
-         
-     
-         if(estadosCap.capital_pais?.capital != null){
-          jsonEstadosCap = {}
-          jsonEstadosCap.capital_atual = estadosCap.capital_pais?.capital
-          jsonEstadosCap.uf = estadosCap.sigla
-          jsonEstadosCap.descricao = estadosCap.nome
-          jsonEstadosCap.capital = estadosCap.capital
-          jsonEstadosCap.regiao = estadosCap.regiao
-          jsonEstadosCap.capital_pais_ano_inicio = estadosCap.capital_pais?.ano_inicio
-          jsonEstadosCap.capital_pais_ano_termino = estadosCap.capital_pais?.ano_fim
-          
-          capitais.push(jsonEstadosCap)
-          }
-          
-     });
-     const jsonCapital = {}
+    if(dadosEstado){
+        response.json(dadosEstado)
+        response.status(200)
+    }
+    else{
+        response.status(404)
+        response.json('{erro: item não encontrado}')
+    }
+})
 
-     jsonCapital.capitais = capitais
+//endpoint: retorna dados da capital filtrando pela sigla do estado
+app.get('/capital/estado', cors(), async function(request, response, next){
+    //recebe variável encaminhada como query String da requisição
+    let siglaEstado = request.query.uf
 
-     return jsonCapital
+    let controleDadosCapital = require('./module/atividade.js')
+    let dadosEstado = controleDadosCapital.getCapitalEstado(siglaEstado)
     
+    if(dadosEstado){
+        response.json(dadosEstado)
+        response.status(200)
+    }
+    else{
+        response.status(404)
+        response.json('{erro: item não encontrado}')
+    }
+})
 
-}
-//getCapitalPais()
+//endpoint: retorna dados dos estados filtrando pela região
+app.get('/regiao/estados', cors(), async function(request, response, next){
+    //recebe variável encaminhada como query String da requisição
+    let regiao = request.query.regiao
 
-const getCidades = function(siglaEstadoC){
-     jsonCidades = {}
-     arrayCidades = []
-     const siglaC = siglaEstadoC
+    let controleDadosEstadosRegiao = require('./module/atividade.js')
+    let dadosRegiao = controleDadosEstadosRegiao.getEstadosRegiao(regiao)
+    
+    if(dadosRegiao){
+        response.json(dadosRegiao)
+        response.status(200)
+    }
+    else{
+        response.status(404)
+        response.json('{erro: item não encontrado}')
+    }
+})
 
-     estados_cidade.estadosCidades.estados.forEach(estados => {
-          
-          if(siglaC == estados.sigla){
-               jsonCidades.uf = estados.sigla
-               jsonCidades.descricao = estados.nome
-               jsonCidades.quantidade_cidades = estados.cidades.length
+//endpoint: retorna dados de estados que já foram capital do país
+app.get('/estado/capital', cors(), async function(request, response, next){
 
-               estados.cidades.forEach(cidadesM => {
-                    arrayCidades.push(cidadesM.nome)                    
-               });
+    let controleDadosEstadosCapital = require('./module/atividade.js')
+    let dadosEstado = controleDadosEstadosCapital.getCapitalPais()
+    
+    if(dadosEstado){
+        response.json(dadosEstado)
+        response.status(200)
+    }
+    else{
+        response.status(404)
+        response.json('{erro: item não encontrado}')
+    }
+})
 
-               jsonCidades.cidades = arrayCidades
-          }          
 
-     
-     })
-     return jsonCidades
-}
-//console.log(getCidades('AC'))
+
+app.listen('8080', function(){
+    console.log('API funcionando!!!!')
+})
